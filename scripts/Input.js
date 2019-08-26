@@ -12,38 +12,35 @@ const KEY_LETTER_D = 68;
 
 function initInput() {
 	document.addEventListener("keydown", keyPressed);
-	document.addEventListener("keyup", keyReleased);
-	
-	p1.setupControls(KEY_UP_ARROW, KEY_DOWN_ARROW, KEY_LEFT_ARROW, KEY_RIGHT_ARROW);
-	p2.setupControls(KEY_LETTER_W, KEY_LETTER_S, KEY_LETTER_A, KEY_LETTER_D);	
+	document.addEventListener("keyup", keyReleased);	
+	p1.setupControls(KEY_UP_ARROW, KEY_LEFT_ARROW, KEY_DOWN_ARROW, KEY_RIGHT_ARROW);
 }
 
 function keyPressed(evt) {
 //	console.log(evt.keyCode);
 	setKeyHoldState(evt.keyCode, p1, true);
-	setKeyHoldState(evt.keyCode, p2, true);
 	evt.preventDefault();
 }
 
 function keyReleased(evt) {
 	setKeyHoldState(evt.keyCode, p1, false);
-	setKeyHoldState(evt.keyCode, p2, false);
 }
 
-function setKeyHoldState(thisKey, thisCar, setTo) {
+function setKeyHoldState(thisKey, thisPlayer, setTo) {
 	switch (thisKey) {
-		case thisCar.controlKeyForGas:
-			thisCar.keyHeld_Gas = setTo;
+		case thisPlayer.controlKeyForNorth:
+			thisPlayer.keyHeld_North = setTo;
 			break;
-		case thisCar.controlKeyForReverse:
-			thisCar.keyHeld_Reverse = setTo;
+		case thisPlayer.controlKeyForEast:
+			thisPlayer.keyHeld_East = setTo;
+			break;			
+		case thisPlayer.controlKeyForSouth:
+			thisPlayer.keyHeld_South = setTo;
 			break;
-		case thisCar.controlKeyForTurnLeft:
-			thisCar.keyHeld_TurnLeft = setTo;
+		case thisPlayer.controlKeyForWest:
+			thisPlayer.keyHeld_West = setTo;
 			break;
-		case thisCar.controlKeyForTurnRight:
-			thisCar.keyHeld_TurnRight = setTo;
-			break;
+
 		default:
 			break;
 	}

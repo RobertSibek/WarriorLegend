@@ -2,7 +2,6 @@
 
 var debugOn = true;
 var p1;
-var p2;
 
 window.onload = function () {
 	createCanvas();
@@ -19,10 +18,8 @@ function debugLog(text) {
 
 function loadingDoneSoStartGame() {
 	setInterval(mainGameLoop, 1000 / framesPerSecond);
-	p1 = new carClass();
-	p2 = new carClass();	
-	p2.carInit(carPic2, "Green Car");
-	p1.carInit(carPic1, "Blue Car");
+	p1 = new warriorClass();
+	p1.init(playerPic, "Blue Car");
 	initInput();
 }
 
@@ -34,13 +31,11 @@ function mainGameLoop() {
 
 // Rendering
 function drawEverything() {
-	drawTracks();
-	p1.carDraw();
-	p2.carDraw();
+	drawRoom();
+	p1.draw();
 } // drawEverything()
 
 // Updating objects
 function moveEverything() {
-	p1.carMove();
-	p2.carMove();
+	p1.move();
 } // moveEverything()
