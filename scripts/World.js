@@ -13,21 +13,21 @@ const TILE_PLAYER = 2;
 
 var tilePics = [];
 
-var roomGrid = //// now with 3's (GOAL), 4's (TREE), 5's (FLAG)
-    [ 4, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-      4, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-      1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-      1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-      1, 0, 0, 0, 1, 1, 1, 4, 4, 4, 4, 1, 1, 1, 1, 1,
-      1, 0, 0, 1, 1, 0, 0, 1, 4, 4, 1, 1, 0, 0, 0, 1,
-      1, 0, 0, 1, 0, 0, 0, 0, 1, 4, 1, 0, 0, 0, 0, 1,
-      1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1,
-      1, 0, 2, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 5, 0, 1,
-      1, 0, 0, 1, 0, 0, 5, 0, 0, 0, 5, 0, 0, 1, 0, 1,
-      1, 1, 1, 1, 3, 3, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1,
-      1, 1, 4, 4, 4, 4, 1, 1, 1, 4, 4, 4, 4, 1, 1, 1];
+var roomGrid =
+    [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+      1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 5, 0, 1, 1, 1, 1, 
+      1, 0, 4, 0, 4, 0, 1, 0, 2, 0, 1, 0, 1, 4, 4, 1, 
+      1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1, 5, 1, 1, 
+      1, 1, 1, 5, 1, 1, 1, 0, 4, 0, 1, 0, 0, 0, 1, 1, 
+      1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 4, 0, 1, 1, 
+      1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 
+      1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 4, 0, 1, 1, 
+      1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 
+      1, 0, 5, 0, 5, 0, 5, 0, 3, 0, 1, 1, 1, 1, 1, 1, 
+      1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 
-function getTileAtPixelCoord(pixelX, pixelY) {
+function getTileIndexAtPixelCoord(pixelX, pixelY) {
 	var tileCol = pixelX / TILE_W;
 	var tileRow = pixelY / TILE_H;
 
@@ -38,11 +38,18 @@ function getTileAtPixelCoord(pixelX, pixelY) {
 	// first check whether the world is within any part of the world wall
 	if (tileCol < 0 || tileCol >= ROOM_COLS ||
 		tileRow < 0 || tileRow >= ROOM_ROWS) {
-		return TILE_WALL; // bail out of function to avoid illegal array position usage
+		debugLog('Out of bounds: ' + pixelX + ',' + pixelY);
+		return undefined; // bail out of function to avoid illegal array position usage
 	}
 
-	var worldIndex = roomTileToIndex(tileCol, tileRow);
-	return (roomGrid[worldIndex]);
+	var tileIndex = roomTileToIndex(tileCol, tileRow);
+	return (tileIndex);
+}
+
+function tileHasTransparency(checkTileType) {
+	return (checkTileType == TILE_DOOR ||
+		   	checkTileType == TILE_KEY ||
+		   	checkTileType == TILE_GOAL);
 }
 
 function roomTileToIndex(tileCol, tileRow) {
@@ -63,6 +70,9 @@ function drawRoom() {
 		tileLeftEdge = 0;
 		for (var eachCol = 0; eachCol < ROOM_COLS; eachCol++) {
 			var tileTypeHere = roomGrid[tileIndex];
+			if (tileHasTransparency(tileTypeHere)) {
+				ctx.drawImage(tilePics[TILE_GROUND], tileLeftEdge, tileTopEdge, TILE_W, TILE_H);
+			}
 			ctx.drawImage(tilePics[tileTypeHere], tileLeftEdge, tileTopEdge, TILE_W, TILE_H);
 			tileIndex++;
 			tileLeftEdge += TILE_W;

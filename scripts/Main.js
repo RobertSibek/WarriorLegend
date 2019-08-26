@@ -16,6 +16,19 @@ function debugLog(text) {
 	}
 }
 
+function drawStatus() {
+	ctx.fillStyle = 'yellow';
+	ctx.shadowColor = 'black';
+	ctx.shadowOffsetX = 2;
+	ctx.shadowOffsetY = 2;
+	ctx.shadowBlur = 3;
+	ctx.font = '20px Arial';
+	ctx.fillText('Keys: ' + p1.keysHeld, 10, 30);
+	ctx.shadowOffsetX = 0;
+	ctx.shadowOffsetY = 0;		
+	ctx.shadowBlur = 0;
+}
+
 function loadingDoneSoStartGame() {
 	setInterval(mainGameLoop, 1000 / framesPerSecond);
 	p1 = new warriorClass();
@@ -33,6 +46,7 @@ function mainGameLoop() {
 function drawEverything() {
 	drawRoom();
 	p1.draw();
+	drawStatus();
 } // drawEverything()
 
 // Updating objects

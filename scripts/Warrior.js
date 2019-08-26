@@ -1,6 +1,6 @@
 /* Warrior.js - all warrior related stuff */
 
-const PLAYER_MOVE_SPEED = 3.0;
+const PLAYER_MOVE_SPEED = 5;
 
 function warriorClass() {
 
@@ -32,9 +32,9 @@ function warriorClass() {
 	this.move = function () {
 		var nextX = this.x;
 		var nextY = this.y;
-		
+
 		if (this.keyHeld_North) {
-			nextY -= PLAYER_MOVE_SPEED
+			nextY -= PLAYER_MOVE_SPEED;
 		}
 		if (this.keyHeld_South) {
 			nextY += PLAYER_MOVE_SPEED;
@@ -46,19 +46,42 @@ function warriorClass() {
 			nextX += PLAYER_MOVE_SPEED;
 		}
 
+		var walkIntoTileIndex = getTileIndexAtPixelCoord(nextX, nextY);
+		var walkIntoTileType = roomGrid[walkIntoTileIndex];
 
-		var movingToTileType = getTileAtPixelCoord(nextX, nextY);
-
-		if (movingToTileType == TILE_GROUND) {
-			this.x = nextX;
-			this.y = nextY;
-		} else if (movingToTileType == TILE_GOAL) {
-			debugLog(this.myName + ' won the game!');
-			this.reset();
+		switch (walkIntoTileType) {
+			case TILE_GROUND:
+				// move player to next position
+				this.x = nextX;
+				this.y = nextY;
+				break;
+			case TILE_KEY:
+				// add key to player's inventory, remove key from the roomGrid
+				this.keysHeld++;
+				roomGrid[walkIntoTileIndex] = TILE_GROUND;
+				break;
+			case TILE_DOOR:
+				// check if there's key available and if yes move into position
+				if (this.keysHeld > 0) {
+					this.keysHeld--;
+					roomGrid[walkIntoTileIndex] = TILE_GROUND;
+				}
+				break;
+			case TILE_GOAL:
+				// show the win message, reset room
+				debugLog(this.myName + ' won the game!');
+				this.reset();
+				break;
+			case TILE_WALL:
+				// do nothing and fall back to default
+			default:
+				// play some dumb sound
+				break;
 		}
 	}
 
 	this.reset = function () {
+		this.keysHeld = 0;
 		this.speed = 0;
 		if (this.homeX == undefined) {
 			for (var i = 0; i < roomGrid.length; i++) {
